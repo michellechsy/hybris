@@ -8,12 +8,10 @@
 				
 		<path dir="${HYBRIS_BIN_DIR}" />
 		
-
-										
-
 		<extension name="cuppy" />
 		<extension name="cuppytrailhmc" />
+		<extension dir="${HYBRIS_BIN_DIR}/../src/cuppytrail" />
+		<extension dir="${HYBRIS_BIN_DIR}/../src/cuppytrailstorefront" />
 
-				
 	</extensions>
 </hybrisconfig>
