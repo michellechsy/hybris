@@ -1,0 +1,53 @@
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# IDEA *
+*.iml
+.idea
+.project
+.classpath
+.settings
+.pmd
+.springBeans
+.externalToolBuilders
+/out/
+.workflow/.workflow
+
+#JIRA plugin
+atlassian-idea-plugin.xml
+
+# Hybris related #
+bin/
+data/
+lib/
+**/gensrc/
+temp/
+target/
+log/
+config/*
+!/config/local*
+jalo
+
+ruleset.xml
+*-testclasses.xml
+*-webtestclasses.xml
+**/commonwebsrc/
+
+**/hmc/bin
+.DS_Store
+velocity.log
+checkstyle_report.xml
+
+
+*.xsd
+
