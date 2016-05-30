@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ [y] hybris Platform
+  ~
+  ~ Copyright (c) 2000-2015 hybris AG
+  ~ All rights reserved.
+  ~
+  ~ This software is the confidential and proprietary information of hybris
+  ~ ("Confidential Information"). You shall not disclose such Confidential
+  ~ Information and shall use it only in accordance with the terms of the
+  ~ license agreement you entered into with hybris.
+  --><widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widgets.xsd">
+
+    
+
+    <widget-connection inputId="input" outputId="nodeSelected" sourceWidgetId="mibackoffice-explorer-tree" targetWidgetId="mibackoffice-tree-node-adapter"/>
+    <widget-connection inputId="genericInput" outputId="true" sourceWidgetId="mibackoffice-tree-node-adapter" targetWidgetId="mibackoffice-typecode-extractor"/>
+    <widget-connection inputId="genericInput" outputId="true" sourceWidgetId="mibackoffice-tree-node-adapter" targetWidgetId="mibackoffice-search-enabler"/>
+    <widget-connection inputId="genericInput" outputId="false" sourceWidgetId="mibackoffice-tree-node-adapter" targetWidgetId="mibackoffice-search-disabler"/>
+    <widget-connection inputId="type" outputId="genericOutput" sourceWidgetId="mibackoffice-typecode-extractor" targetWidgetId="mibackoffice-search-logic"/>
+    <widget-connection inputId="enabled" outputId="genericOutput" sourceWidgetId="mibackoffice-search-enabler" targetWidgetId="mibackoffice-text-search"/>
+    <widget-connection inputId="enabled" outputId="genericOutput" sourceWidgetId="mibackoffice-search-disabler" targetWidgetId="mibackoffice-text-search"/>
+    <widget-connection inputId="searchtext" outputId="query" sourceWidgetId="mibackoffice-text-search" targetWidgetId="mibackoffice-search-logic"/>
+    <widget-connection inputId="pageable" outputId="pageable" sourceWidgetId="mibackoffice-search-logic" targetWidgetId="mibackoffice-simple-list"/>
+
+</widgets>

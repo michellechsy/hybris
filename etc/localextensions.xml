@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hybrisconfig
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="resources/schemas/extensions.xsd">
+  <extensions>
+    <!-- localextensions.xml -->
+    <path dir="${HYBRIS_BIN_DIR}" />
+
+    <!-- Fundamental Supports -->
+    <extension dir="${HYBRIS_BIN_DIR}/ext-commerce/solrserver" />
+
+    <!-- Storefront & Sample Data -->
+    <extension dir="${HYBRIS_BIN_DIR}/ext-template/yacceleratorstorefront"/>
+    <extension dir="${HYBRIS_BIN_DIR}/ext-data/apparelstore" />
+
+    <!-- Backoffice supports & Campaign -->
+    <extension dir="${HYBRIS_BIN_DIR}/../src/mibackoffice" />
+  </extensions>
+</hybrisconfig>
