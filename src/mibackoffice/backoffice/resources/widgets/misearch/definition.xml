@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<!-- Step1a: create a widget definition
+  Make sure the id is unique, otherwise it will not appear on the list of widgets in the
+  "Choose a widget" wizard from within the Application Orchestration.
+-->
+<widget-definition
+    id="org.mibackoffice.widgets.misearch"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+
+  <name>Mi Search</name>
+  <description>Mi search widget</description>
+  <defaultTitle>Search</defaultTitle>
+  <author>Mi</author>
+  <version>0.1</version>
+
+  <!-- step 1d: add the controller -->
+  <controller class="com.mi.backoffice.widgets.MiSearchController" />
+
+</widget-definition>

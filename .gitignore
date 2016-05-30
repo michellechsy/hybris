@@ -34,8 +34,7 @@ lib/
 temp/
 target/
 log/
-config/*
-!/config/local*
+config
 jalo
 
 ruleset.xml

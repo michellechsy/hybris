@@ -18,6 +18,9 @@
 
 	<bean id="mibackofficeService" class="com.mi.backoffice.services.MibackofficeService" />
 
+  <!-- Step 1c: create search service -->
+	<bean id="miSearchService" class="com.mi.backoffice.services.MiSearchService" />
+
 	<bean id="mibackofficeLabelLocator" class="com.hybris.cockpitng.util.labels.ResourcesLabelLocator" scope="singleton" init-method="init" lazy-init="false">
   		<property name="location" value="/mibackoffice-backoffice-labels/"/>
   		<property name="name" value="labels"/>

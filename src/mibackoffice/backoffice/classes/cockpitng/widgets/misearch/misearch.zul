@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<!-- Step1b: create a widget view
+    Define all frontend components.
+    For the search widget, we need two components: a text box and a button
+-->
+
+<widget xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd"
+>
+  <style src="${wr}/default.css" />
+  <div>
+    <hlayout>
+      <textbox id="searchInput" />
+      <button id="searchBtn" label="Search" />
+    </hlayout>
+  </div>
+
+</widget>
