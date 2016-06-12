@@ -18,4 +18,21 @@
   <!-- step 1d: add the controller -->
   <controller class="com.mi.backoffice.widgets.MiSearchController" />
 
+  <!-- step2a: test a widget
+  Let's assume that you want to test a sample widget that takes a String as its only input, and
+  after the input is notified an output containing the String split by dots is being sent. Moreover,
+   on demand (for example a user clicks a button) the size of last given output is sent to another
+   output:
+  -->
+  <sockets>
+    <input id="in" type="java.lang.String" />
+    <output id="out" type="java.util.Collection[String]" />
+    <output id="size" type="java.lang.Integer" />
+  </sockets>
+  <view src="demo-widget.zul" />
+  <controller class="com.mi.backoffice.widgets.DemoWidgetController" />
+  <keywords>
+    <keyword>Demo</keyword>
+  </keywords>
+
 </widget-definition>

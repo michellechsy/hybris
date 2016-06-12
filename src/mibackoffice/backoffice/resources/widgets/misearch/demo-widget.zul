@@ -1,0 +1,22 @@
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:zk="http://www.zkoss.org/2005/zk"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+    xmlns:w="client">
+
+  <!-- Step2d: Testing a widget
+    Breadboard Testing
+
+If you would like to test your widget through its view (and sockets), there is a dedicated
+Breadboard widget that enables you to do so.
+the Breadboard widget enables you to put any widget in it, in this case the Demo widget, and to
+interact with it by both: sending socket events or using its view. In the case of more complex
+interactions, the input socket expression is implemented as a Groovy language script.
+
+Let's assume that the view file of the Demo widget introduced above is defined as follows:
+  -->
+  <widget sclass="demo-widget" height="100%">
+    <button id="lastSizeButton" label="Try me!" />
+  </widget>
+</zk>
