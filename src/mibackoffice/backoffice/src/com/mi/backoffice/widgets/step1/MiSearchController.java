@@ -1,4 +1,4 @@
-package com.mi.backoffice.widgets;
+package com.mi.backoffice.widgets.step1;
 
 /**
  * Step1d : create the action for search button

@@ -1,4 +1,4 @@
-package com.mi.backoffice;
+package com.mi.backoffice.widgets.step2;
 
 import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.testing.AbstractActionUnitTest;

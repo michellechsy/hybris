@@ -1,4 +1,4 @@
-package com.mi.backoffice.widgets;
+package com.mi.backoffice.widgets.step2;
 
 import com.google.common.collect.Lists;
 import com.hybris.cockpitng.annotations.SocketEvent;

@@ -50,3 +50,4 @@ checkstyle_report.xml
 
 *.xsd
 /**/eclipsebin/*
+.env

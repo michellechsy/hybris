@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<!-- Step3b: Passing data between widget  (the filename must be same as the widget id defined in definition.xml)
+    Create a widget view for the chat which include components:
+    - a text box
+    - a button
+    - a label that displays the last reveived message.
+-->
+<widget xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNameSpaceSchemaLocation="http://www.zkoss.org/2005/zul">
+  <div>
+    <textbox id="msgInput" />
+    <button id="sendBtn" label="Send"/>
+  </div>
+  <div>
+    <label id="lastMsgLabel" value="No message."/>
+  </div>
+</widget>

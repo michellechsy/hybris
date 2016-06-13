@@ -1,11 +1,10 @@
-package com.mi.backoffice;
+package com.mi.backoffice.widgets.step2;
 
 import com.google.common.collect.Lists;
 import com.hybris.cockpitng.testing.AbstractWidgetUnitTest;
 import com.hybris.cockpitng.testing.annotation.DeclaredInput;
 import com.hybris.cockpitng.testing.annotation.DeclaredViewEvent;
 import com.hybris.cockpitng.testing.annotation.NullSafeWidget;
-import com.mi.backoffice.widgets.DemoWidgetController;
 import org.junit.Test;
 import org.zkoss.zk.ui.event.Events;
 

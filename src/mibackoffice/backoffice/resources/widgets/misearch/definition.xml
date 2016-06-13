@@ -16,7 +16,8 @@
   <version>0.1</version>
 
   <!-- step 1d: add the controller -->
-  <controller class="com.mi.backoffice.widgets.MiSearchController" />
+  <view src="misearch.zul" />
+  <controller class="com.mi.backoffice.widgets.step1.MiSearchController" />
 
   <!-- step2a: test a widget
   Let's assume that you want to test a sample widget that takes a String as its only input, and
@@ -30,7 +31,7 @@
     <output id="size" type="java.lang.Integer" />
   </sockets>
   <view src="demo-widget.zul" />
-  <controller class="com.mi.backoffice.widgets.DemoWidgetController" />
+  <controller class="com.mi.backoffice.widgets.step2.DemoWidgetController" />
   <keywords>
     <keyword>Demo</keyword>
   </keywords>
