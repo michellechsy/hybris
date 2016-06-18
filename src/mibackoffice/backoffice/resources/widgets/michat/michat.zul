@@ -15,7 +15,17 @@
     <button id="sendBtn" label="Send"/>
   </div>
   <div>
-    <label id="lastMsgLabel" value="No message."/>
+    <label style="color: green" id="lastMsgLabel" value="No message."/>
   </div>
-  <widgetslot slotID="additionalArea" width="100%" height="100%" />
+
+  <!-- new line -->
+  <separator />
+  <separator />
+
+  <!-- Step5: Creating Composed Widgets
+    add a widgetslot that will make it possible to add only one additional widget
+  -->
+  <!--<widgetslot slotID="additionalArea" id="ChatSlot" width="100%" height="100%" />-->
+  <!-- to add widgetchildren instead of slot: -->
+  <widgetchildren slotID="additionalArea" id="ChatContainer" type="tab" width="100%" height="100%" />
 </widget>
