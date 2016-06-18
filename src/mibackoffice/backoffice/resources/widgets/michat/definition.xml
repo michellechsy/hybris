@@ -29,4 +29,15 @@
 
   <!-- Step3c: add the controller -->
   <controller class="com.mi.backoffice.widgets.step3.MiChatController" />
+
+
+  <!-- Step4a: Modif a Widget Definition
+    Add two settings that will make it possible to add additional, only one widget
+  -->
+  <settings>
+    <!-- this setting is accessed in the view file of chat window -->
+    <setting key="multi" type="Boolean" default-value="false" />
+    <!-- this setting is accessed in the controller of chat widget -->
+    <setting key="history" type="Boolean" default-value="false" />
+  </settings>
 </widget-definition>

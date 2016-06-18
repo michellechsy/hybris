@@ -9,10 +9,13 @@
 <widget xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNameSpaceSchemaLocation="http://www.zkoss.org/2005/zul">
   <div>
-    <textbox id="msgInput" />
+    <!-- Step4b: Modify a widget
+    update the textbox to enable/disable multiline -->
+    <textbox id="msgInput" multiline="${widgetSettings.multi}" />
     <button id="sendBtn" label="Send"/>
   </div>
   <div>
     <label id="lastMsgLabel" value="No message."/>
   </div>
+  <widgetslot slotID="additionalArea" width="100%" height="100%" />
 </widget>
