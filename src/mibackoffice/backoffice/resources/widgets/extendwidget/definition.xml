@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<!-- Step7a: Extend a widget
+To do so, need to define a new widget here.
+NOTE: view definitioni cannot be overwritten
+-->
+<widget-definition
+    id="com.hybris.extended.explorertree.custom"
+    extends="com.hybris.cockpitng.widgets.common.explorertree"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+
+  <name>Extended Explorer Tree</name>
+  <defaultTitle>Extended Explorer Tree</defaultTitle>
+
+  <controller class="com.mi.backoffice.widgets.step7.CustomExplorerTreeController" />
+
+  <!-- step7d: redefine widget sockets (will replace the parent one) -->
+  <sockets>
+    <input id="miCustomInput" type="java.lang.String" />
+    <input id="nodeSelected" type="com.hybris.backoffice.navigation.NavigationNode" />
+
+    <output id="nodeSelected" type="com.hybris.backoffice.navigation.NavigationNode" />
+    <output id="dataSelected" type="java.lang.Object" />
+    <output id="miCustomOutput" type="java.lang.String" />
+  </sockets>
+</widget-definition>

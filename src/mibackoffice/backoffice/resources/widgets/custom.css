@@ -1,0 +1,8 @@
+/* Step7b: Extend a widget
+    modify widget's design. This filename should match the last part of widget's id or use 'default.css'
+*/
+@import url("/backoffice/widgetClasspathResource/widgets/explorerTreeWidget/explorertree.css");
+/* to hide the filter box */
+.yw-explorerTree-filterTextbox{
+    display:none
+}
