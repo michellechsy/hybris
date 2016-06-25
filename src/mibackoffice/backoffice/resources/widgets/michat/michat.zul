@@ -26,6 +26,6 @@
     add a widgetslot that will make it possible to add only one additional widget
   -->
   <!--<widgetslot slotID="additionalArea" id="ChatSlot" width="100%" height="100%" />-->
-  <!-- to add widgetchildren instead of slot: -->
+  <!-- to add widgetchildren instead of slot: to add more than one widget as a child component -->
   <widgetchildren slotID="additionalArea" id="ChatContainer" type="tab" width="100%" height="100%" />
 </widget>

@@ -7,6 +7,8 @@
 
 <widget xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="http://www.zkoss.org/2005/zul">
+  <!--wr: declare the absolute web path(widget root) of the widget definition file and other
+  widget resources such as CSS file and images  -->
   <style src="${wr}/default.css" />
   <div>
     <hlayout>

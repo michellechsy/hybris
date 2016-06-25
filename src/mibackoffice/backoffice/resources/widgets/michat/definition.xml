@@ -39,5 +39,7 @@
     <setting key="multi" type="Boolean" default-value="false" />
     <!-- this setting is accessed in the controller of chat widget -->
     <setting key="history" type="Boolean" default-value="false" />
+
+
   </settings>
 </widget-definition>

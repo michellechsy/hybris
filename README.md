@@ -12,16 +12,16 @@ Hybris Backoffice
 
 ### Implementation list:
 - Creating & Configuring Widgets
-    - [x] Creating a Widget
-    - [x] Testing a Widget
-    - [x] Passing Data Between Widgets
-    - [x] Parametrizing a Widget (define settings)
-    - [x] Creating Composed Widgets
-    - [x] Creating a configurable flow wizard widget
-    - [x] Extending a Widget in the custom backoffice-based app
-    - [] Creating a reusable widget group for use on separate host machines
-    - [] Positioning elements in a widget within configuration
-    - [] Widget application context
+    - [x] Step1: Creating a Widget
+    - [x] Step2: Testing a Widget
+    - [x] Step3: Passing Data Between Widgets
+    - [x] Step4: Parametrizing a Widget (define settings)
+    - [x] Step5: Creating Composed Widgets
+    - [x] Step6: Creating a configurable flow wizard widget
+    - [x] Step7: Extending a Widget in the custom backoffice-based app
+    - [x] Step8: Creating a reusable widget group for use on separate host machines
+    - [] Step9: Positioning elements in a widget within configuration
+    - [] Step10: Widget application context
 - Creating & Configuring Editors
     - []
 - Creating & Configuring Actions

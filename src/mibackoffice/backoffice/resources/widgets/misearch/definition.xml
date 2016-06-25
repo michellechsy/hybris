@@ -24,7 +24,10 @@
   after the input is notified an output containing the String split by dots is being sent. Moreover,
    on demand (for example a user clicks a button) the size of last given output is sent to another
    output:
+  NOTE: uncomment below config when you want to see the displaying result. And it will override the
+  above search config
   -->
+ <!--
   <sockets>
     <input id="in" type="java.lang.String" />
     <output id="out" type="java.util.Collection[String]" />
@@ -35,5 +38,5 @@
   <keywords>
     <keyword>Demo</keyword>
   </keywords>
-
+-->
 </widget-definition>

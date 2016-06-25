@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!-- Step8a: create a reusable widget group -->
+<widget-definition id="com.hybris.cockpitng.widgetgroup">
+  <sockets/>
+  <name>Widget Group Demo</name>
+  <description>Shows how to create reusable widget groups</description>
+  <version>1.0</version>
+  <keywords>
+    <keyword>Groups</keyword>
+  </keywords>
+</widget-definition>

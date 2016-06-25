@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!-- Step8b: create a reusable widget group -->
+<!-- got error when create the widget group in backoffice <not fix yet>
+ ERROR: Could not create widget view
+    org.zkoss.zk.ui.UiException: Not allowed to set vflex and height at the same time except vflex="min"
+-->
+
+<widgets>
+  <!--parent id should match the definitioin ID-->
+  <widget id="com.hybris.cockpitng.widgetgroup"
+          widgetDefinitionId="com.hybris.cockpitng.borderlayout"
+          slotId="composedRootSlot"
+          template="false">
+    <widget id="nonGroupedInput"
+            widgetDefinitionId="com.hybris.cockpitng.inputtestwidget"
+            slotId="leftSlot"
+            template="false">
+      <setting key="defaultScript" value="" type="String"/>
+      <setting key="widgetStyleAttribute" value="" type="String"/>
+      <setting key="textAreaHeight" value="300" type="Integer"/>
+      <setting key="widgetStyleClass" value="" type="String"/>
+      <virtual-sockets/>
+    </widget>
+    <widget id="nonGroupedOutput"
+            widgetDefinitionId="com.hybris.cockpitng.outputtestwidget"
+            slotId="centerSlot"
+            template="false">
+      <setting key="widgetStyleAttribute" value="" type="String"/>
+      <setting key="widgetStyleClass" value="" type="String"/>
+      <virtual-sockets/>
+    </widget>
+    <setting key="opaqueBG" value="true" type="String"/>
+    <setting key="southHeight" value="50px" type="String"/>
+    <setting key="widgetStyleAttribute" value="" type="String"/>
+    <setting key="northHeight" value="50px" type="String"/>
+    <setting key="westBorder" value="none" type="String"/>
+    <setting key="northBorder" value="none" type="String"/>
+    <setting key="eastDisabled" value="true" type="Boolean"/>
+    <setting key="southBorder" value="none" type="String"/>
+    <setting key="southDisabled" value="true" type="Boolean"/>
+    <setting key="eastBorder" value="none" type="String"/>
+    <setting key="northDisabled" value="true" type="Boolean"/>
+    <setting key="eastWidth" value="25%" type="String"/>
+    <setting key="westCollapsible" value="true" type="Boolean"/>
+    <setting key="widgetStyleClass" value="" type="String"/>
+    <setting key="southCollapsible" value="true" type="Boolean"/>
+    <setting key="northCollapsible" value="true" type="Boolean"/>
+    <setting key="border" value="none" type="String"/>
+    <setting key="westWidth" value="300px" type="String"/>
+    <setting key="centerBorder" value="none" type="String"/>
+    <setting key="westDisabled" value="false" type="Boolean"/>
+    <setting key="eastCollapsible" value="true" type="Boolean"/>
+    <virtual-sockets/>
+  </widget>
+
+  <widget-connection sourceWidgetId="nonGroupedInput" outputId="singleoutput"
+                     targetWidgetId="nonGroupedOutput" inputId="genericInput"/>
+
+</widgets>
