@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<!--Section2 - Creating and Configuring an Editor -->
+<!-- Step1a: create an editor, create the editor definition -->
+
+<editor-definition
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/editor-definition.xsd"
+    id="com.mibackoffice.editor.simpletext">
+  <name>Mi Simple Text Editor</name>
+  <description>Simple Text Editor</description>
+  <!-- the type of the value this editor is capable of handling -->
+  <type>java.lang.String</type>
+  <!-- this is the renderer class of the editor. It is responsible for creation of the editor
+  view -->
+  <editorClassName>com.mi.backoffice.editors.simpletext.MiSimpleTextEditor</editorClassName>
+
+
+  <!-- step1d (optional): create an editor without a renderer class
+    in this case, by default an implicit renderer of type DefaultZulCockpitEditorRenderer is used.
+    Its main purpose is to bind the two event listeners with the root component of the editor
+    definition, in order to expose the value changes onEditorValueChanged and onEditorEvent
+  -->
+  <type>java.lang.Boolean.zul</type>
+  <view src="boolEditor.zul" />
+
+</editor-definition>

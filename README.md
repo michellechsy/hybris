@@ -20,9 +20,20 @@ Hybris Backoffice
     - [x] Step6: Creating a configurable flow wizard widget
     - [x] Step7: Extending a Widget in the custom backoffice-based app
     - [x] Step8: Creating a reusable widget group for use on separate host machines
-    - [] Step9: Positioning elements in a widget within configuration
-    - [] Step10: Widget application context
+    - [x] Step9: Positioning elements in a widget within configuration
+        You can set up position in the following widgets:
+        - Editor Area widget: position of tabs, sections, panels, and attributes
+        - Advanced Search widget: position of fields
+        - Collection Browser widget: position of columns
+    - [x] Step10: Widget application context
+        Registered as a child of the web application context during the deployment.
+        A bean of a (backoffice) extension can be overwritten in another one.
 - Creating & Configuring Editors
-    - []
+    - [x] Creating an Editor
+    - [] Using Editors in Widgets
+    - [] Configuring Sets of Actions and Editors
+    - [] Nested Editors
+    - [] Thumbnails in the Reference Editors
+    - [] Creating Socket-Aware Actions and Editors
 - Creating & Configuring Actions
     - []

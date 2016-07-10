@@ -1,0 +1,21 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
+<!-- step1d (optional): create an editor without a renderer class
+   in this case, by default an implicit renderer of type DefaultZulCockpitEditorRenderer is used.
+   Its main purpose is to bind the two event listeners with the root component of the editor
+   definition, in order to expose the value changes onEditorValueChanged and onEditorEvent
+ -->
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd">
+  <hlayout id="demoEditor">
+    <radiogroup id="rgr"/>
+    <radio label="True" radiogroup="rgr" forward='onCheck=demoEditor.onEditorValueChanged(${true})'
+           checked="${arg.initialValue == true}"/>
+    <radio label="False" radiogroup="rgr" forward='onCheck=demoEditor.onEditorValueChanged(${false})'
+           checked="${arg.initialValue == false}"/>
+    <radio label="n/a" radiogroup="rgr" forward='onCheck=demoEditor.onEditorValueChanged(${null})'
+           checked="${arg.initialValue == null}"/>
+  </hlayout>
+
+</zk>
