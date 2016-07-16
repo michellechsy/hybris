@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ [y] hybris Platform
+  ~
+  ~ Copyright (c) 2000-2015 hybris AG
+  ~ All rights reserved.
+  ~
+  ~ This software is the confidential and proprietary information of hybris
+  ~ ("Confidential Information"). You shall not disclose such Confidential
+  ~ Information and shall use it only in accordance with the terms of the
+  ~ license agreement you entered into with hybris.
+  -->
+
+<config xmlns="http://www.hybris.com/cockpit/config"
+        xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+
+  <!-- step2e: specify the parameters in the UI config -->
+  <context component="testeditors">
+    <y:editors xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+      <y:group qualifier="common">
+        <y:label>editorgroup.common</y:label>
+        <y:property qualifier="mytext" editor="org.myextension.editor.simpletext"/>
+        <y:property qualifier="mytext2" editor="org.myextension.editor.simpletext">
+          <y:editor-parameter>
+            <y:name>is-multiline</y:name>
+            <y:value>true</y:value>
+          </y:editor-parameter>
+          <y:editor-parameter>
+            <y:name>rows</y:name>
+            <y:value>5</y:value>
+          </y:editor-parameter>
+        </y:property>
+      </y:group>
+    </y:editors>
+  </context>
+
+
+</config>

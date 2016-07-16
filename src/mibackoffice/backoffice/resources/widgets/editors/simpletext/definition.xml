@@ -24,4 +24,5 @@
   <type>java.lang.Boolean.zul</type>
   <view src="boolEditor.zul" />
 
+  <view src="widget.zul" />
 </editor-definition>

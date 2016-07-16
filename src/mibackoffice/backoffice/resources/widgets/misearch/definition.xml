@@ -33,7 +33,7 @@
     <output id="out" type="java.util.Collection[String]" />
     <output id="size" type="java.lang.Integer" />
   </sockets>
-  <view src="demo-widget.zul" />
+  <view src="demo-widgetid.zul" />
   <controller class="com.mi.backoffice.widgets.step2.DemoWidgetController" />
   <keywords>
     <keyword>Demo</keyword>

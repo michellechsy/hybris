@@ -1,0 +1,90 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd">
+
+  <!-- step2a: using editors in widget
+      Add a simple and default editor in a widget, to display an editor as a part of the widget
+     -->
+<!--
+  <editor id="textEditor" type="java.lang.String"
+          defaultEditor="com.hybris.cockpitng.editor.defaulttext" />
+ -->
+
+  <!-- step2c: handle event from widget view
+    in case when you do not want to bind the editor value to a specific property of the widget model, but just handle
+    value changes with your own logic, you donot have to use the property attribute. Instead, you need to define
+    onValueChanged attribute inside the editor element.
+  -->
+ <!-- <editor id="textEditor" type="java.lang.String"
+          onValueChanged="miWidgetController.doThings()"
+  />
+-->
+
+  <!-- step2d: specify initial value -->
+  <editor id="textEditor" type="java.lang.String"
+          property="textEditorProperty"
+          value="Put some text here"
+          />
+
+  <!-- step2e: using editor parameter
+    1. make the editor's text box have multiple lines
+    2. define a number of rows for a multiple lines text box
+  -->
+  <editor property="mytext" defaultEditor="org.myextension.editor.simpletext" type="java.lang.String"/>
+
+  <editor property="mytext2" defaultEditor="org.myextension.editor.simpletext" type="java.lang.String">
+    <custom-attributes is-multiline="true" rows="5"/>
+  </editor>
+
+  <editors config="testeditors" group="common"/>
+
+  <!-- alternative : can also set by Java class -->
+  <!--
+  final Editor editor1 = new Editor();
+  editor1.setProperty("mytext");
+  editor1.setType("java.lang.String");
+  editor1.setWidgetInstanceManager(getWidgetInstanceManager());
+  editor1.setDefaultEditor("org.myextension.editor.simpletext");
+  editor1.afterCompose();
+
+  final Editor editor2 = new Editor();
+  editor2.setProperty("mytext");
+  editor2.setType("java.lang.String");
+  editor2.setWidgetInstanceManager(getWidgetInstanceManager());
+  editor2.setDefaultEditor("org.myextension.editor.simpletext");
+  editor2.addParameter("is-multiline", Boolean.TRUE);
+  editor2.addParameter("rows", 5);
+  editor2.afterCompose();
+  -->
+
+  <!-- or define in widget definition using the "settings" element
+  (will be overriden by the above mechanism). add below in definition.xml
+
+  <settings>
+		<setting key="is-multiline" default-value="true" type="Boolean"/>
+		<setting key="rows" default-value="5" type="Integer"/>
+	</settings>
+  -->
+
+  <!-- step2b: bind editor to property of widget model
+      Assume we are using the MiWidgetController. The value of the property is displayed in the editor, and whenever,
+      a user changes the value in the editor, the corresponding model property is updated automatically.
+   -->
+  <label value="user:" />
+  <editor type="java.lang.String" property="user.name" />
+
+  <label value="product code:" />
+  <editor type="java.lang.String" property="product.code" />
+
+  <label value="product name:" />
+  <editor type="java.lang.String" property="product.name" />
+
+  <label value="category:" />
+  <editor type="java.lang.String" property="product.category.name" />
+
+  <label value="advanced mode:" />
+  <editor type="java.lang.Boolean" property="advanceMode" />
+
+</zk>
