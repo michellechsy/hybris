@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project
+  xmlns:if="ant:if"
+  xmlns:unless="ant:unless"
+  xmlns:ac="antlib:net.sf.antcontrib"
+  xmlns:ivy="antlib:org.apache.ivy.ant"
+  name="hybris" basedir="." default="all">
+  <!--
+         ##########################################################################
+  # Environment Portal Entry
+  # ======================================================================
+  # HYBRIS_HOME => Unzipped Hybris commerce suite.
+  # ANT_HOME    => $HYBRIS_HOME/hybris/bin/platform/apache-ant-{version}
+  # ANT_OPTS    => memory settings for ant.
+  ##########################################################################-->
+  <property environment="env"/>
+  <property name="tmpdir" value="${java.io.tmpdir}"/>
+
+  <condition property="cmd" value="cmd.exe" else="sh">
+    <os family="windows" />
+  </condition>
+
+  <condition property="osfamily" value="windows" else="unix">
+    <os family="windows" />
+  </condition>
+
+  <!-- local env. properties settings -->
+  <property name="dotenv" value="${basedir}/.env"/>
+
+  <condition property="dotenv.exists">
+    <available file="${dotenv}" type="file"/>
+  </condition>
+
+  <!--
+         ##########################################################################
+  # File path settings
+  ##########################################################################-->
+  <condition property="is.windows"><os family="windows" /></condition>
+  <condition property="mvn.cmd" value="mvn.bat" else="mvn">
+    <os family="windows" />
+  </condition>
+
+  <!--
+         ##########################################################################
+  # Environment Settings
+  ##########################################################################-->
+  <property name="hybris.instance.platform" value="${basedir}/bin/platform"/>
+  <condition property="hybris.instance.exists">
+    <and>
+      <available file="bin"    type="dir"/>
+      <available file="config" type="dir"/>
+      <available file="data"   type="dir"/>
+      <available file="roles"  type="dir"/>
+      <available file="temp"   type="dir"/>
+    </and>
+  </condition>
+
+  <condition property="hybris.src.exists">
+    <and>
+      <available file="${basedir}/etc" type="dir"/>
+      <available file="${basedir}/src" type="dir"/>
+    </and>
+  </condition>
+
+  <condition property="hybris.home.supplied">
+    <isset property="hybris.home"/>
+  </condition>
+
+  <!-- versions requirement -->
+  <property name="jdk.ver" value="1.8"/>
+  <property name="ant.ver" value="ver. 1.9"/>
+  <property name="ant.ver.regex" value="^1\.9.*$"/>
+
+  <!--
+         ##########################################################################
+  # Project Settings
+  ##########################################################################-->
+  <property name="solr.host"  value="127.0.0.1" unless:set="solr.host"/>
+  <property name="solr.port"  value="8983" unless:set="solr.port" />
+
+  <condition property="is.solr.running" else="false">
+    <socket server="${solr.host}" port="${solr.port}"/>
+  </condition>
+
+  <condition property="for.production" else="false">
+    <and>
+      <isset property="production"/>
+      <istrue value="${production}"/>
+    </and>
+  </condition>
+
+  <!-- whether we need to erase entire .m2|.ant libraries -->
+  <condition property="erase.libs" value="true" else="false">
+    <and>
+      <isset property="erase.libs"/>
+      <istrue value="${erase.libs}"/>
+    </and>
+  </condition>
+
+  <!-- for Hybris Server -->
+  <condition property="use.daemon.mode" value="true" else="false">
+    <and>
+      <isset property="daemon"/>
+      <istrue value="${daemon}"/>
+    </and>
+  </condition>
+
+  <condition property="tomcat.config.exists" value="true" else="false">
+    <and>
+      <available file="${basedir}/etc" type="dir"/>
+      <available file="${basedir}/etc/tomcat" type="dir"/>
+      <available file="${basedir}/etc/tomcat/server.xml" type="file"/>
+    </and>
+  </condition>
+
+  <condition property="is.valid.env" value="true" else="false">
+    <or>
+      <equals arg1="${hybris.env}" arg2="development"/>
+      <equals arg1="${hybris.env}" arg2="testing"/>
+      <equals arg1="${hybris.env}" arg2="production"/>
+    </or>
+  </condition>
+
+  <!-- Default Hybris inputs -->
+  <property name="input.template" value="develop"/>
+
+  <!--
+         ##########################################################################
+  # Initialize Ivy as deps. manager.
+  # ======================================================================
+  # Ivy: v2.4.0
+  #   * ant-contrib v1.0b3
+  #   * xmltask v1.16
+  ##########################################################################-->
+  <property name="ivy.install.version" value="2.4.0" />
+  <condition property="ivy.home" value="${env.IVY_HOME}">
+    <isset property="env.IVY_HOME" />
+  </condition>
+  <property name="ivy.home" value="${user.home}/.ant"/>
+  <property name="ivy.jar.dir" value="${ivy.home}/lib"/>
+  <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
+  <property name="ivy.dep.file" value="${tmpdir}/ivy.xml" />
+  <property name="ivy.settings" value="${tmpdir}/ivysettings.xml"/>
+
+  <target name="initIvy">
+    <mkdir dir="${ivy.jar.dir}"/>
+    <!-- download Ivy from web site so that it can be used even without any special installation -->
+    <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+        dest="${ivy.jar.file}" usetimestamp="true"/>
+
+    <get src="http://repo2.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar"
+        dest="${ivy.jar.dir}/ant-contrib-1.0b3.jar" usetimestamp="true"/>
+
+    <!-- try to load ivy here from ivy home, in case the user has not already dropped
+                     it into ant's lib dir (note that the latter copy will always take precedence).
+            We will not fail as long as local lib dir exists (it may be empty) and
+            ivy is in at least one of ant's lib dir or the local lib dir. -->
+    <path id="ivy.lib.path">
+      <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    </path>
+    <!-- Ivy settings -->
+    <echoxml file="${ivy.settings}">
+      <ivysettings>
+        <settings defaultResolver="chain"/>
+          <resolvers>
+            <chain name="chain">
+              <ibiblio name="central" m2compatible="true"/>
+              <ibiblio name="mvn-repos" m2compatible="true" root="http://repository.pentaho.org/artifactory/repo"/>
+              <filesystem name="local-mvn" m2compatible="true" local="true">
+                <ivy pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
+                <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].[ext]"/>
+              </filesystem>
+            </chain>
+        </resolvers>
+      </ivysettings>
+    </echoxml>
+    <!-- Ivy managed dependencies -->
+    <echoxml file="${ivy.dep.file}">
+      <ivy-module version="2.0">
+        <info organisation="epam" module="hybris"/>
+        <dependencies>
+          <dependency org="oopsconsultancy" name="xmltask" rev="1.16" />
+        </dependencies>
+      </ivy-module>
+    </echoxml>
+
+    <taskdef resource="org/apache/ivy/ant/antlib.xml"
+        classpathref="ivy.lib.path"
+        uri="antlib:org.apache.ivy.ant"/>
+
+    <ivy:settings file="${ivy.settings}"/>
+    <ivy:retrieve pattern="${ivy.jar.dir}/[artifact]-[revision].[ext]"/>
+
+    <taskdef uri="antlib:net.sf.antcontrib"
+        resource="net/sf/antcontrib/antlib.xml"
+        classpath="${ivy.jar.dir}/ant-contrib-1.0b3.jar"/>
+
+    <taskdef name="xmltask"
+        classname="com.oopsconsultancy.xmltask.ant.XmlTask"
+        classpath="${ivy.jar.dir}/xmltask-1.16.jar"/>
+  </target>
+
+  <!--
+         ##########################################################################
+  # Internal macros
+  ##########################################################################-->
+  <macrodef name="checkJDK">
+    <sequential>
+      <fail message="[JDK] ${jdk.ver} not found">
+        <condition>
+          <not>
+            <equals arg1="${ant.java.version}" arg2="${jdk.ver}" />
+          </not>
+        </condition>
+      </fail>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="checkAnt">
+    <sequential>
+      <antversion property="version.running" />
+      <fail message="[ANT] ${ant.ver} not found.">
+        <condition>
+          <not>
+            <matches string="${version.running}" pattern="${ant.ver.regex}"/>
+          </not>
+        </condition>
+      </fail>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="checkHybris">
+    <sequential>
+      <property name="build.number" value="${hybris.pkg}/platform/build.number"/>
+      <!-- ensure we have HYBRIS_HOME configured in ENV. -->
+      <fail message="[Hybris] binary packages not found">
+        <condition>
+          <not>
+            <available file="${build.number}"/>
+          </not>
+        </condition>
+      </fail>
+
+      <!-- ensure we have valid Hybris version. -->
+      <loadproperties srcfile="${build.number}"/>
+      <fail message="[Hybris] not supported version: ${version}">
+        <condition>
+          <matches string="${version}" pattern="^4.*$"/>
+        </condition>
+      </fail>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="createExtensionsSet">
+    <attribute name="filename" default="localextensions.xml"/>
+    <sequential>
+      <ac:if>
+        <available file="${basedir}/etc/@{filename}" type="file"/>
+        <ac:then>
+          <echo level="warning">etc/@{filename} already exists</echo>
+        </ac:then>
+        <ac:else>
+          <!-- start create initial extension sets -->
+          <echo level="info">Creating new extensions file: ${basedir}/etc/@{filename}</echo>
+      <echo file="${basedir}/etc/@{filename}"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<hybrisconfig
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="resources/schemas/extensions.xsd">
+  <extensions>
+    <!-- @{filename} -->
+    <path dir="${HYBRIS_BIN_DIR}" />
+
+    <!-- Fundamental Supports -->
+    <extension dir="${HYBRIS_BIN_DIR}/ext-commerce/solrserver" />
+    <extension dir="${HYBRIS_BIN_DIR}/ext-addon/addonsupport"/>
+
+    <!-- Storefront & Sample Data -->
+    <extension dir="${HYBRIS_BIN_DIR}/ext-template/yacceleratorstorefront"/>
+  </extensions>
+</hybrisconfig>]]></echo>
+        </ac:else>
+      </ac:if>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="createPropertiesForProduction">
+    <attribute name="filename" default="local.properties"/>
+    <sequential>
+      <propertyfile file="${basedir}/etc/@{filename}" comment="production settings">
+        <entry key="build.parallel" value="false" />
+        <entry key="solrserver.instances.default.autostart" value="false" />
+        <entry key="solrserver.instances.default.port" value="8983" />
+
+        <entry key="tomcat.http.port" value="9001"/>
+        <entry key="tomcat.ssl.port" value="9002"/>
+        <entry key="tomcat.jmx.port" value="9003"/>
+        <entry key="tomcat.jmx.server.port" value="9004"/>
+
+        <!-- *NOTE* disable system initialization on production profile -->
+        <entry key="system.unlocking.disabled" value="true"/>
+        <entry key="addonfilter.active" value="false"/>
+
+        <entry key="yacceleratorstorefront.webroot" value="/store" />
+        <entry key="storefrontContextRoot" value="/store" />
+      </propertyfile>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="createPropertiesForDevelopment">
+    <attribute name="filename" default="local.properties"/>
+    <sequential>
+      <propertyfile file="${basedir}/etc/@{filename}" comment="@{filename} settings">
+        <entry key="build.parallel" value="true" />
+        <entry key="solrserver.instances.default.autostart" value="false" />
+        <entry key="solrserver.instances.default.port" value="8983" />
+
+        <entry key="tomcat.http.port" value="9001"/>
+        <entry key="tomcat.ssl.port" value="9002"/>
+        <entry key="tomcat.jmx.port" value="9003"/>
+        <entry key="tomcat.jmx.server.port" value="9004"/>
+
+        <entry key="system.unlocking.disabled" value="false"/>
+        <entry key="addonfilter.active" value="true"/>
+
+        <entry key="mail.from" value="epmhbrs@gmail.com"/>
+        <entry key="mail.replyto" value="SpecialEPM-HBRSDevs@epam.com"/>
+        <entry key="mail.smtp.server" value="smtp.googlemail.com"/>
+        <entry key="mail.smtp.port" value="587"/>
+        <entry key="mail.smtp.auth" value="true"/>
+        <entry key="mail.smtp.debug" value="true"/>
+        <entry key="mail.smtp.user" value="epmhbrs@gmail.com"/>
+        <entry key="mail.smtp.password" value="qnslgrkjmwforwos"/>
+        <entry key="mail.smtp.starttls.enable" value="true"/>
+        <entry key="mail.use.tls" value="true"/>
+
+        <entry key="yacceleratorstorefront.webroot" value="/store" />
+        <entry key="storefrontContextRoot" value="/store" />
+      </propertyfile>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="createProperties">
+    <attribute name="filename" default="local.properties"/>
+    <sequential>
+      <ac:if>
+        <available file="${basedir}/etc/@{filename}" type="file"/>
+        <ac:then>
+          <echo level="warning">etc/@{filename} already exists</echo>
+        </ac:then>
+        <ac:else>
+          <!-- start create initial settings -->
+          <ac:if>
+            <istrue value="${for.production}"/>
+            <ac:then>
+              <createPropertiesForProduction/>
+            </ac:then>
+            <ac:else>
+              <createPropertiesForDevelopment/>
+            </ac:else>
+          </ac:if>
+        </ac:else>
+      </ac:if>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="createInitialSettings">
+    <sequential>
+      <!-- default settings -->
+      <ant dir="${hybris.instance.platform}" target="all" unless:set="hybris.instance.exists"/>
+      <!-- Get rid of "if/unless" bug from ant ver. 1.9.1 (Hybris's one) -->
+      <ac:if>
+        <not><available file="${basedir}/etc" type="dir"/></not>
+        <ac:then>
+          <mkdir dir="${basedir}/etc"/>
+        </ac:then>
+      </ac:if>
+
+      <createProperties/>
+      <createExtensionsSet/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="installDeps">
+    <sequential>
+      <property name="dbdriver" value="${hybris.home}/hybris/bin/platform/lib/dbdriver"/>
+      <!-- install Maven dependecies (if exists) -->
+      <ac:if>
+        <available file="${hybris.home}/hybris-dependencies" type="dir"/>
+        <ac:then>
+          <copy todir="${mvn.repository}">
+            <fileset dir="${hybris.deps}"/>
+          </copy>
+        </ac:then>
+      </ac:if>
+      <!-- install all proprietary database drivers defined
+                      in ${platform}/lib/dbdriver/external-dependencies.xml.
+      -->
+      <xmltask source="${dbdriver}/external-dependencies.xml">
+        <call path="//:project/:dependencies/:dependency/:groupId">
+          <param name="item.artifactId" path="../:artifactId/text()"/>
+          <param name="item.groupId" path="../:groupId/text()"/>
+          <param name="item.version" path="../:version/text()"/>
+          <actions>
+            <exec dir="${mvn.home}/bin" executable="${cmd}" osfamily="${osfamily}">
+              <arg line="${mvn.install.jar}"/>
+              <arg line="-DgroupId=@{item.groupId}"/>
+              <arg line="-DartifactId=@{item.artifactId}"/>
+              <arg line="-Dversion=@{item.version}"/>
+              <arg line="-Dfile=${dbdriver}/@{item.artifactId}-@{item.version}.jar"/>
+            </exec>
+          </actions>
+        </call>
+      </xmltask>
+    </sequential>
+  </macrodef>
+
+  <!--
+         ##########################################################################
+  # Hybris Package Sources (by Order)
+  # ======================================================================
+  # 1) -Dhybris.home        Hybris Package Sources path passed via Ant command line.
+  # 2) .env => hybris.home  Hybris Package Suurces path defined in ".env" (properties file).
+  # 3) env.HYBRIS_HOME      Hybris Package Sources path defined in system environment variables.
+  ##########################################################################-->
+  <target name="loadEnvProperties" if="dotenv.exists" description="try load .env properties">
+    <loadproperties srcfile="${dotenv}"/>
+  </target>
+
+  <target name="source"
+    depends="initIvy,loadEnvProperties"
+    description="locate the Hybris package source by order (-Dhybris.home > .env > env.HYBRIS_HOME)">
+    <!-- system environment "HYBRIS_HOME" as fallback -->
+    <ac:if>
+      <not><isset property="hybris.home"/></not>
+      <ac:then>
+        <property name="hybris.home" value="${env.HYBRIS_HOME}" unless:set="hybris.home"/>
+      </ac:then>
+    </ac:if>
+
+    <fail message="[Hybris] Hybris source missing (-Dhybris.home > .env > env.HYBRIS_HOME)">
+      <condition>
+        <not>
+          <isset property="hybris.home"/>
+        </not>
+      </condition>
+    </fail>
+
+    <property name="hybris.pkg"   value="${hybris.home}/hybris/bin"/>
+    <property name="hybris.deps"  value="${hybris.home}/hybris-dependencies"/>
+
+    <!-- Apache maven environment -->
+    <ac:if>
+      <available file="${hybris.home}/build-tools/apache-maven"/>
+      <ac:then>
+        <property name="mvn.home" value="${hybris.home}/build-tools/apache-maven"/>
+      </ac:then>
+      <ac:else>
+        <property name="mvn.home" value="${env.MAVEN_HOME}"/>
+      </ac:else>
+    </ac:if>
+
+    <fail message="[Hybris] Maven not found, have you correctly configured ${hybris.home}?">
+      <condition>
+        <not>
+          <available file="${mvn.home}" type="dir"/>
+        </not>
+      </condition>
+    </fail>
+
+    <property name="mvn.repository"  value="${user.home}/.m2/repository"/>
+    <property name="mvn.install.jar" value="${mvn.cmd} install:install-file -Dpackaging=jar"/>
+  </target>
+
+
+  <!--
+         ##########################################################################
+  # Check point & preparations.
+  ##########################################################################-->
+  <target name="safeguard"
+    depends="source"
+    description="ensure we have valid Hybris &amp; related Dependencies">
+    <checkJDK/>
+    <checkAnt/>
+    <checkHybris/>
+    <echo message="======================================================================"/>
+    <echo message=" ███████╗███╗   ██╗██╗   ██╗  | OS family:       ${os.name}"/>
+    <echo message=" ██╔════╝████╗  ██║██║   ██║  | Java platform:   ${java.version}"/>
+    <echo message=" █████╗  ██╔██╗ ██║██║   ██║  | Apache Ant:      ${version.running}"/>
+    <echo message=" ██╔══╝  ██║╚██╗██║╚██╗ ██╔╝  | Ant home:        ${env.ANT_HOME}"/>
+    <echo message=" ███████╗██║ ╚████║ ╚████╔╝   | Hybris version:  ${version}"/>
+    <echo message=" ╚══════╝╚═╝  ╚═══╝  ╚═══╝    | Hybris platform: ${hybris.instance.platform}"/>
+    <echo message="======================================================================"/>
+  </target>
+
+  <target name="bootstrap"
+    depends="safeguard"
+    description="prepare Hybris packages with initial settings">
+
+    <installDeps/>
+
+    <sync todir="${basedir}/bin">
+      <fileset dir="${hybris.pkg}"/>
+    </sync>
+
+    <createInitialSettings/>
+
+    <antcall target="all"/>
+  </target>
+
+  <!--
+         ##########################################################################
+  # Shortcuts/Helpers for platform's build.xml.
+  ##########################################################################-->
+  <target name="purge" description="clean up everything (except source.) back to stage 0">
+    <echo message="======================================================================"/>
+    <echo message=" Ready to *ERASE* all the data in 5 seconds..."/>
+    <echo message="======================================================================"/>
+    <echo message=" ██╗    ██╗ █████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ "/>
+    <echo message=" ██║    ██║██╔══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ "/>
+    <echo message=" ██║ █╗ ██║███████║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗ "/>
+    <echo message=" ██║███╗██║██╔══██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║ "/>
+    <echo message=" ╚███╔███╔╝██║  ██║██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝ "/>
+    <echo message="  ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝  "/>
+    <echo message="======================================================================"/>
+    <sleep seconds="5"/>
+    <echo message=" Start purging the whole Hybris instance..."/>
+    <echo message="======================================================================"/>
+    <delete dir="${basedir}/bin" />
+    <delete dir="${basedir}/config" />
+    <delete dir="${basedir}/data" />
+    <delete dir="${basedir}/log" />
+    <delete dir="${basedir}/roles" />
+    <delete dir="${basedir}/temp" />
+    <delete file="${basedir}/velocity.log"/>
+  </target>
+
+  <target name="createSettings"
+    depends="initIvy"
+    description="create local.${hybris.env}.properties &amp; localextensions.${hybris.env}.xml setting pair">
+    <!-- all source settings consolidated into 'etc' instead of default 'config' -->
+    <ac:if>
+      <not><available file="${basedir}/etc" type="dir"/></not>
+      <ac:then>
+        <mkdir dir="${basedir}/etc"/>
+      </ac:then>
+    </ac:if>
+
+    <ac:if>
+      <isset property="hybris.env"/>
+      <ac:then>
+        <property name="local.properties"     value="local.${hybris.env}.properties"/>
+        <property name="localextensions.xml"  value="localextensions.${hybris.env}.xml"/>
+      </ac:then>
+      <ac:else>
+        <property name="local.properties"     value="local.properties"/>
+        <property name="localextensions.xml"  value="localextensions.xml"/>
+      </ac:else>
+    </ac:if>
+
+    <createProperties filename="${local.properties}"/>
+    <createExtensionsSet filename="${localextensions.xml}"/>
+  </target>
+
+  <target name="configure"
+    description="select environment settings/extensions set for Hybris via -Dhybris.env. (default: local.properties|localextensions.xml)">
+    <ac:if>
+      <isset property="hybris.env"/>
+      <ac:then>
+        <property name="local.properties"     value="local.${hybris.env}.properties"/>
+        <property name="localextensions.xml"  value="localextensions.${hybris.env}.xml"/>
+      </ac:then>
+      <ac:else>
+        <property name="local.properties"     value="local.properties"/>
+        <property name="localextensions.xml"  value="localextensions.xml"/>
+      </ac:else>
+    </ac:if>
+
+    <fail message="${basedir}/etc/${local.properties} not found">
+      <condition>
+        <not>
+          <available file="${basedir}/etc/${local.properties}"/>
+        </not>
+      </condition>
+    </fail>
+
+    <fail message="etc/${localextensions.xml} not found">
+      <condition>
+        <not>
+          <available file="${basedir}/etc/${localextensions.xml}"/>
+        </not>
+      </condition>
+    </fail>
+    <!-- unify all Hybris settings into etc folder -->
+    <echo message="----------------------------------------------------------------------"/>
+    <echo message="Settings up Hybris Environment (${local.properties})"/>
+    <echo message="----------------------------------------------------------------------"/>
+    <copy file="${basedir}/etc/${local.properties}"     tofile="${basedir}/config/local.properties" overwrite="true"/>
+    <copy file="${basedir}/etc/${localextensions.xml}"  tofile="${basedir}/config/localextensions.xml" overwrite="true"/>
+    <!-- update tomcat settings profile (if exists) -->
+    <ac:if>
+      <istrue value="${tomcat.config.exists}"/>
+      <ac:then>
+        <copy file="${basedir}/etc/tomcat/server.xml"
+          tofile="${basedir}/config/tomcat/conf/server.xml"
+          overwrite="true"/>
+      </ac:then>
+    </ac:if>
+  </target>
+
+  <target name="startHybrisServer"
+    depends="startSolrServer"
+    description="Starts the hybris Server">
+    <ac:if>
+      <istrue value="${use.daemon.mode}"/>
+      <ac:then>
+        <echo message="Starting Hybris server as daemon..."/>
+        <echo message="======================================================================"/>
+        <exec dir="${basedir}/bin/platform/tomcat/bin" executable="sh">
+          <arg line="wrapper.sh start" />
+        </exec>
+      </ac:then>
+      <ac:else>
+        <echo message="Starting Hybris server..."/>
+        <echo message="======================================================================"/>
+        <ant dir="${hybris.instance.platform}" target="startHybrisServer" />
+      </ac:else>
+    </ac:if>
+  </target>
+
+  <target name="stopHybrisServer"
+    unless="is.windows"
+    depends="stopSolrServer"
+    description="stop Hybris server in non-Windows OS in background">
+
+    <echo message="Stoping Hybris server..."/>
+    <echo message="======================================================================"/>
+    <exec dir="${basedir}/bin/platform/tomcat/bin" executable="sh">
+      <arg line="wrapper.sh stop" />
+    </exec>
+  </target>
+
+  <target name="startSolrServer"
+    unless="${is.solr.running}"
+    description="${hybris.instance.platform} startSolrServer">
+
+    <ant dir="${hybris.instance.platform}" target="startSolrServer">
+      <property name="instance.port" value="${solr.port}" />
+    </ant>
+  </target>
+
+  <target name="stopSolrServer"
+    if="${is.solr.running}"
+    description="${hybris.instance.platform} stopSolrServer">
+
+    <ant dir="${hybris.instance.platform}" target="stopSolrServer" >
+      <property name="instance.port" value="${solr.port}" />
+    </ant>
+  </target>
+
+  <target name="addoninstall" description="${hybris.instance.platform} addoninstall">
+    <ant dir="${hybris.instance.platform}" target="addoninstall" />
+  </target>
+
+  <target name="all" depends="configure">
+    <ant dir="${hybris.instance.platform}" target="clean" />
+    <ant dir="${hybris.instance.platform}" target="all" />
+  </target>
+
+  <target name="clean">
+    <ant dir="${hybris.instance.platform}" target="clean" />
+  </target>
+
+  <target name="customize">
+    <ant dir="${hybris.instance.platform}" target="customize" />
+  </target>
+
+  <target name="initialize" depends="configure">
+    <ant dir="${hybris.instance.platform}" target="initialize" />
+  </target>
+
+  <target name="updatesystem">
+    <ant dir="${hybris.instance.platform}" target="updatesystem" />
+  </target>
+
+  <target name="alltests">
+    <ant dir="${hybris.instance.platform}" target="alltests" />
+  </target>
+</project>
+
